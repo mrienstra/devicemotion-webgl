@@ -8,7 +8,7 @@ var ws;
 var isMobile = navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/) || false;
 var data_frequency = 1; // polling interval at which to send client device data, '1' sends all data, '10' would be send every 10th data point
 //
-var translationFactor = 100;
+var translationFactor = 10;
 var rotationFactor = 0.1;
 
 // Universal Functions
@@ -166,13 +166,15 @@ var setMessageListener = function(){
     }
     var motion = reconstituteMotion(message.data);
 
-    MovingCube.translateX( motion.x * translationFactor );
-    MovingCube.translateY( motion.y * translationFactor );
-    MovingCube.translateZ( motion.z * translationFactor );
+    MovingCube.acceleration = {
+      x: motion.x,
+      y: motion.y,
+      z: motion.z
+    };
 
-    MovingCube.rotateX( motion.alpha * rotationFactor );
-    MovingCube.rotateY( motion.beta  * rotationFactor  );
-    MovingCube.rotateZ( motion.gamma * rotationFactor );
+    MovingCube.rotateZ( motion.alpha * rotationFactor );
+    MovingCube.rotateX( motion.beta  * rotationFactor );
+    MovingCube.rotateY( motion.gamma * rotationFactor );
   };
 };
 

@@ -128,6 +128,7 @@ function initThree()
   var MovingCubeMat = new THREE.MeshFaceMaterial(materialArray);
   MovingCube = new THREE.Mesh( MovingCubeGeom, MovingCubeMat );
   MovingCube.position.set(0, 25.1, 0);
+  MovingCube.acceleration = {x: 0, y: 0, z: 0};
   scene.add( MovingCube );
 
   animate();
@@ -182,9 +183,25 @@ function update() {
   if ( keyboard.pressed('down') )
     MovingCube.position.z += moveDistance;
 
+  if (MovingCube.acceleration.x) {
+    MovingCube.translateX( MovingCube.acceleration.x * delta * translationFactor );
+  }
+  if (MovingCube.acceleration.y) {
+    MovingCube.translateY( MovingCube.acceleration.y * delta * translationFactor );
+  }
+  if (MovingCube.acceleration.z) {
+    MovingCube.translateZ( MovingCube.acceleration.z * delta * translationFactor );
+  }
+
+  if ( keyboard.pressed('space') ) {
+    // Reset
+    MovingCube.rotation.set(0, 0, 0);
+    MovingCube.position.set(0, 0, 0);
+  }
+
   controls.update();
   stats.update();
-}
+};
 
 function render()
 {
