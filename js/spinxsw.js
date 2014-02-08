@@ -8,10 +8,8 @@ var ws;
 var isMobile = navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/) || false;
 var data_frequency = 1; // polling interval at which to send client device data, '1' sends all data, '10' would be send every 10th data point
 //
-var num_lights = 18;
-var current_color = 'rgb(102,255,255)'; // aqua
-var light_increment = 360 / num_lights;
-var current_light, rotations, starting_angle;
+var translationFactor = 100;
+var rotationFactor = 0.1;
 
 // Universal Functions
 var round = function(val) {
@@ -161,7 +159,6 @@ var reconstituteMotion = function(data){
 };
 
 var setMessageListener = function(){
-  if (typeof(current_light) === 'undefined') current_light = 0; // set first light to show
   ws.onmessage = function (event) { // respond to node.js notifications coming back
     var message = JSON.parse(event.data);
     if (window.location.search === '?verbose') {
@@ -169,13 +166,13 @@ var setMessageListener = function(){
     }
     var motion = reconstituteMotion(message.data);
 
-    MovingCube.translateX( motion.x );
-    MovingCube.translateY( motion.y );
-    MovingCube.translateZ( motion.z );
+    MovingCube.translateX( motion.x * translationFactor );
+    MovingCube.translateY( motion.y * translationFactor );
+    MovingCube.translateZ( motion.z * translationFactor );
 
-    MovingCube.rotateX( motion.alpha );
-    MovingCube.rotateY( motion.beta  );
-    MovingCube.rotateZ( motion.gamma );
+    MovingCube.rotateX( motion.alpha * rotationFactor );
+    MovingCube.rotateY( motion.beta  * rotationFactor  );
+    MovingCube.rotateZ( motion.gamma * rotationFactor );
   };
 };
 
