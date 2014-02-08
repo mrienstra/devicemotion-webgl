@@ -20,24 +20,27 @@ var round = function(val) {
 };
 
 var deviceMotionHandler = function(eventData) {
-  var info = '';
+  var motion;
 
   if (eventData.acceleration) {
     var acceleration = eventData.acceleration;
   } else {
     var acceleration = eventData.accelerationIncludingGravity;
   }
-  info += round(acceleration.x);
-  info += ':' + round(acceleration.y);
-  info += ':' + round(acceleration.z);
 
   var rotation = eventData.rotationRate;
-  info += ':' + round(rotation.alpha);
-  info += ':' + round(rotation.beta);
-  info += ':' + round(rotation.gamma);
+
+  motion = [
+    round(acceleration.x),
+    round(acceleration.y),
+    round(acceleration.z),
+    round(rotation.alpha),
+    round(rotation.beta),
+    round(rotation.gamma)
+  ];
 
   // send motion to node server, and update screen to reflect which way user is pointing
-  sendSensorData(info);
+  sendSensorData(JSON.stringify(motion));
   //updateScreenCoordinates(client_angle);
 };
 
@@ -146,7 +149,7 @@ var showAnimation = function(){
 };
 
 var reconstituteMotion = function(data){
-  var data = data.split(':');
+  var data = JSON.parse(data);
   return {
     x:     data[0],
     y:     data[1],
