@@ -14,6 +14,11 @@ var light_increment = 360 / num_lights;
 var current_light, rotations, starting_angle;
 
 // Universal Functions
+var round = function(val) {
+  var amt = 10;
+  return Math.round(val * amt) /  amt;
+};
+
 var deviceMotionHandler = function(eventData) {
   var info = '';
 
