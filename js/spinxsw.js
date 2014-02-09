@@ -28,18 +28,21 @@ var deviceMotionHandler = function(eventData) {
 
   var rotation = eventData.rotationRate;
 
-  motion = [
+  motion = JSON.stringify([
     round(acceleration.x),
     round(acceleration.y),
     round(acceleration.z),
     round(rotation.alpha),
     round(rotation.beta),
     round(rotation.gamma)
-  ];
+  ]);
 
-  // send motion to node server, and update screen to reflect which way user is pointing
-  sendSensorData(JSON.stringify(motion));
-  //updateScreenCoordinates(client_angle);
+  if (motion !== '[0,0,0,0,0,0]' || motion !== lastMotion) {
+    // send motion to node server, and update screen to reflect which way user is pointing
+    sendSensorData(motion);
+    //updateScreenCoordinates(client_angle);
+    lastMotion = motion;
+  }
 };
 
 var init = function(){
