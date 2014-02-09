@@ -11,6 +11,7 @@ var data_frequency = 1; // polling interval at which to send client device data,
 var accelerationFactor = 1;
 var translationFactor = 100;
 var rotationFactor = 0.1;
+var disableMotion = true;
 
 var cycle = 0;
 
@@ -36,21 +37,35 @@ var deviceMotionHandler = function(eventData) {
 //     if (cycle === 
 //   }
 
-  motion = JSON.stringify([
-    round(acceleration.x),
-    round(acceleration.y),
-    round(acceleration.z),
-    round(rotation.alpha),
-    round(rotation.beta),
-    round(rotation.gamma)
-  ]);
+  if (disableMotion) {
+    motion = JSON.stringify([
+      round(rotation.alpha),
+      round(rotation.beta),
+      round(rotation.gamma)
+    ]);
 
-  if (motion !== '[0,0,0,0,0,0]' || motion !== lastMotion) {
-    // send motion to node server, and update screen to reflect which way user is pointing
-    sendSensorData(motion);
-    //updateScreenCoordinates(client_angle);
-    lastMotion = motion;
+    if (motion === '[0,0,0]') {
+      return; // don't send
+    }
+  } else {
+    motion = JSON.stringify([
+      round(acceleration.x),
+      round(acceleration.y),
+      round(acceleration.z),
+      round(rotation.alpha),
+      round(rotation.beta),
+      round(rotation.gamma)
+    ]);
+
+    if (motion === '[0,0,0,0,0,0]' && motion === lastMotion) {
+      return; // don't send
+    }
   }
+
+  // send motion to node server, and update screen to reflect which way user is pointing
+  sendSensorData(motion);
+  //updateScreenCoordinates(client_angle);
+  lastMotion = motion;
 };
 
 var init = function(){
@@ -159,14 +174,25 @@ var showAnimation = function(){
 
 var reconstituteMotion = function(data){
   var data = JSON.parse(data);
-  return {
-    x:     data[0],
-    y:     data[1],
-    z:     data[2],
-    alpha: data[3],
-    beta:  data[4],
-    gamma: data[5]
-  };
+
+  if (data.length === 3) {
+    data = {
+      alpha: data[0],
+      beta:  data[1],
+      gamma: data[2]
+    };
+  } else {
+    data = {
+      x:     data[0],
+      y:     data[1],
+      z:     data[2],
+      alpha: data[3],
+      beta:  data[4],
+      gamma: data[5]
+    };
+  }
+
+  return data;
 };
 
 var setMessageListener = function(){
@@ -177,11 +203,13 @@ var setMessageListener = function(){
     }
     var motion = reconstituteMotion(message.data);
 
-    MovingCube.acceleration = {
-      x: motion.x,
-      y: motion.z,
-      z: motion.y * -1
-    };
+    if (!disableMotion) {
+      MovingCube.acceleration = {
+        x: motion.x,
+        y: motion.z,
+        z: motion.y * -1
+      };
+    }
 
     MovingCube.rotateX( motion.alpha * rotationFactor );
     MovingCube.rotateZ( motion.beta  * rotationFactor * -1 );

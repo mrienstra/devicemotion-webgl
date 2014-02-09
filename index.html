@@ -184,32 +184,33 @@ function update() {
   if ( keyboard.pressed('down') )
     MovingCube.position.z += moveDistance;
 
-  if (MovingCube.acceleration.x) {
-    MovingCube.speed.x += MovingCube.acceleration.x * accelerationFactor;
-  } else {
-    MovingCube.speed.x = 0;
-  }
-  if (MovingCube.acceleration.y) {
-    MovingCube.speed.y += MovingCube.acceleration.y * accelerationFactor;
-  } else {
-    MovingCube.speed.y = 0;
-  }
-  if (MovingCube.acceleration.z) {
-    MovingCube.speed.z += MovingCube.acceleration.z * accelerationFactor;
-  } else {
-    MovingCube.speed.z = 0;
-  }
+  if (!disableMotion) {
+    if (MovingCube.acceleration.x) {
+      MovingCube.speed.x += MovingCube.acceleration.x * accelerationFactor;
+    } else {
+      MovingCube.speed.x = 0;
+    }
+    if (MovingCube.acceleration.y) {
+      MovingCube.speed.y += MovingCube.acceleration.y * accelerationFactor;
+    } else {
+      MovingCube.speed.y = 0;
+    }
+    if (MovingCube.acceleration.z) {
+      MovingCube.speed.z += MovingCube.acceleration.z * accelerationFactor;
+    } else {
+      MovingCube.speed.z = 0;
+    }
 
-  if (MovingCube.speed.x) {
-    MovingCube.translateX( MovingCube.speed.x * delta * translationFactor );
+    if (MovingCube.speed.x) {
+      MovingCube.translateX( MovingCube.speed.x * delta * translationFactor );
+    }
+    if (MovingCube.speed.y) {
+      MovingCube.translateY( MovingCube.speed.y * delta * translationFactor );
+    }
+    if (MovingCube.speed.z) {
+      MovingCube.translateZ( MovingCube.speed.z * delta * translationFactor );
+    }
   }
-  if (MovingCube.speed.y) {
-    MovingCube.translateY( MovingCube.speed.y * delta * translationFactor );
-  }
-  if (MovingCube.speed.z) {
-    MovingCube.translateZ( MovingCube.speed.z * delta * translationFactor );
-  }
-
 
   if ( keyboard.pressed('space') ) {
     // Reset
