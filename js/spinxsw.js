@@ -8,8 +8,11 @@ var ws;
 var isMobile = navigator.userAgent.match(/(iPhone|iPod|iPad|Android|BlackBerry)/) || false;
 var data_frequency = 1; // polling interval at which to send client device data, '1' sends all data, '10' would be send every 10th data point
 //
-var translationFactor = 10;
+var accelerationFactor = 1;
+var translationFactor = 100;
 var rotationFactor = 0.1;
+
+var cycle = 0;
 
 // Universal Functions
 var round = function(val) {
@@ -27,6 +30,11 @@ var deviceMotionHandler = function(eventData) {
   }
 
   var rotation = eventData.rotationRate;
+
+//   if (data_frequency > 1) {
+//     cycle++;
+//     if (cycle === 
+//   }
 
   motion = JSON.stringify([
     round(acceleration.x),
@@ -171,12 +179,12 @@ var setMessageListener = function(){
 
     MovingCube.acceleration = {
       x: motion.x,
-      y: motion.y,
-      z: motion.z
+      y: motion.z,
+      z: motion.y * -1
     };
 
-    MovingCube.rotateZ( motion.alpha * rotationFactor );
-    MovingCube.rotateX( motion.beta  * rotationFactor );
+    MovingCube.rotateX( motion.alpha * rotationFactor );
+    MovingCube.rotateZ( motion.beta  * rotationFactor * -1 );
     MovingCube.rotateY( motion.gamma * rotationFactor );
   };
 };

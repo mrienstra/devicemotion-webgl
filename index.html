@@ -129,6 +129,7 @@ function initThree()
   MovingCube = new THREE.Mesh( MovingCubeGeom, MovingCubeMat );
   MovingCube.position.set(0, 25.1, 0);
   MovingCube.acceleration = {x: 0, y: 0, z: 0};
+  MovingCube.speed = {x: 0, y: 0, z: 0};
   scene.add( MovingCube );
 
   animate();
@@ -184,17 +185,30 @@ function update() {
     MovingCube.position.z += moveDistance;
 
   if (MovingCube.acceleration.x) {
-    MovingCube.translateX( MovingCube.acceleration.x * delta * translationFactor );
+    MovingCube.speed.x += MovingCube.acceleration.x * accelerationFactor;
   }
   if (MovingCube.acceleration.y) {
-    MovingCube.translateY( MovingCube.acceleration.y * delta * translationFactor );
+    MovingCube.speed.y += MovingCube.acceleration.y * accelerationFactor;
   }
   if (MovingCube.acceleration.z) {
-    MovingCube.translateZ( MovingCube.acceleration.z * delta * translationFactor );
+    MovingCube.speed.z += MovingCube.acceleration.z * accelerationFactor;
   }
+
+  if (MovingCube.speed.x) {
+    MovingCube.translateX( MovingCube.speed.x * delta * translationFactor );
+  }
+  if (MovingCube.speed.y) {
+    MovingCube.translateY( MovingCube.speed.y * delta * translationFactor );
+  }
+  if (MovingCube.speed.z) {
+    MovingCube.translateZ( MovingCube.speed.z * delta * translationFactor );
+  }
+
 
   if ( keyboard.pressed('space') ) {
     // Reset
+    MovingCube.acceleration = {x: 0, y: 0, z: 0};
+    MovingCube.speed = {x: 0, y: 0, z: 0};
     MovingCube.rotation.set(0, 0, 0);
     MovingCube.position.set(0, 0, 0);
   }
